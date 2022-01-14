@@ -1,0 +1,29 @@
+plugins {
+    id "com.gradle.enterprise" version "3.4.1"
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+    }
+}
+
+rootProject.name = 'todo'
+include 'TodoRepository'
+include 'model'
+
+//println System.getenv()
+if(!System.getenv().containsKey("SUB_BUILD")) {
+    // include all connector projects
+    def integrationsPath = rootDir.toPath().resolve('airbyte-integrations/connectors')
+    println integrationsPath
+    integrationsPath.eachDir { dir ->
+        def buildFiles = file(dir).list { file, name -> name == "build.gradle" }
+        if (buildFiles.length == 1) {
+            include ":airbyte-integrations:connectors:${dir.getFileName()}"
+        }
+    }
+}
+include '111'
+

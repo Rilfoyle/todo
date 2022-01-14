@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'com.diffplug.spotless' version '5.7.0'
+//    id 'com.gradle.build-scan' version '1.16'
+}
+
+
+group 'com.liulq.gradle'
+version '1.0-SNAPSHOT'
+
+repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/repositories/central/'}
+    mavenCentral()
+}
+
+
+
+spotless {
+    java {
+        importOrder()
+        target()
+    }
+}
+//compileJava.dependsOn 'spotlessApply'
+
+allprojects {
+    apply plugin: 'base'
+    def sub = rootDir.relativePath(projectDir.parentFile).replace('/', '.')
+    println('sub:' + sub.toString())
+    group = "io.${rootProject.name}${sub.isEmpty() ? '' : ".$sub"}"
+    println('group: ' + group)
+
+    project.archivesBaseName = "${project.group}-${project.name}"
+    println('archivesBaseName: ' +project.archivesBaseName)
+}
+
+
+
+dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testCompileOnly 'junit:junit:4.12'
+    implementation 'org.apache.logging.log4j:log4j-api:2.16.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.16.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.16.0'
+//    compile project(':TodoRepository')
+    implementation project(':TodoRepository')
+//    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
